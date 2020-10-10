@@ -62,6 +62,13 @@ namespace CSC482_Lab0x04_Fibb
             }
         }
 
+        private long CalculateOverhead()
+        {
+            _stopwatch.Restart();
+            _stopwatch.Stop();
+            return _stopwatch.ElapsedTicks;
+        }
+
         private void AlgorithmTestRuntime(Algorithm algorithm, DoublingCalculator doublingCalc)
         {
             PrintHeader(algorithm);
@@ -94,7 +101,7 @@ namespace CSC482_Lab0x04_Fibb
                 double averageTimeMicro = TicksToMicroseconds(tickCounter) / testCount;
 
                 currentStats.PrevTimeMicro = currentStats.TimeMicro;
-                currentStats.TimeMicro = averageTimeMicro;
+                currentStats.TimeMicro = averageTimeMicro - TicksToMicroseconds(CalculateOverhead());
                 // Need to keep a dictionary of previous times for doubling calculation on this alg.
                 currentStats.PrevTimesTable.TryAdd(currentStats.n, averageTimeMicro);
 
@@ -113,9 +120,9 @@ namespace CSC482_Lab0x04_Fibb
         {
             Console.WriteLine($"Starting run-time tests for {algorithm.Method.Name}...\n");
             Console.WriteLine(
-                " \t\t\t           |    |  Doubling Ratios   |    |                Algorithm| ");
+                " \t\t\t           |    |            Doubling Ratios     |    |                Algorithm| ");
             Console.WriteLine(
-                "N\t\t\t       Time|    | Actual  | Expected |    |                   Result|");
+                "N\t\t\t       Time|    |         Actual|        Expected|    |                   Result|");
         }
 
         private void PrintAlgorithmTerminationMessage(Algorithm algorithm)
@@ -131,14 +138,14 @@ namespace CSC482_Lab0x04_Fibb
         private void PrintData(AlgStats stats)
         {
             var actualDoubleFormatted = stats.ActualDoublingRatio < 0
-                ? "na".PadLeft(12)
-                : stats.ActualDoublingRatio.ToString("F2").PadLeft(12);
+                ? "na".PadLeft(20)
+                : stats.ActualDoublingRatio.ToString("F2").PadLeft(20);
             var expectDoubleFormatted = stats.ExpectedDoublingRatio < 0
-                ? "na".PadLeft(7)
-                : stats.ExpectedDoublingRatio.ToString("F2").PadLeft(7);
+                ? "na".PadLeft(16)
+                : stats.ExpectedDoublingRatio.ToString("F2").PadLeft(16);
 
             Console.Write(
-                $"{stats.TimeMicro,20:F2} {actualDoubleFormatted} {expectDoubleFormatted} {stats.AlgResult,35:N0}");
+                $"{stats.TimeMicro,20:F2} {actualDoubleFormatted} {expectDoubleFormatted} {stats.AlgResult,30:N0}");
         }
 
         private static double TicksToMicroseconds(long ticks)

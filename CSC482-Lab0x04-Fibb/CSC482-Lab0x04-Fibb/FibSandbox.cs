@@ -15,26 +15,55 @@ namespace CSC482_Lab0x04_Fibb
         public void FibRecurDoublingCalc(AlgStats algStats)
         {
 
+            // Only calculate doubling ratios for even values of n and if n/2 exists in prev times table.
+            if (algStats.n % 2 == 0 && algStats.PrevTimesTable.TryGetValue(algStats.n / 2, out double halfTime))
+            {
+                algStats.ActualDoublingRatio = (algStats.TimeMicro / halfTime);
+
+                double goldenRatio = 1.61803398875; 
+                algStats.ExpectedDoublingRatio = Math.Pow(goldenRatio, algStats.n) / Math.Pow(goldenRatio, ((double)algStats.n / 2));
+            }
+            else
+            {
+                algStats.ActualDoublingRatio = -1;
+                algStats.ExpectedDoublingRatio = -1;
+            }
+
         }
 
         public long FibCache(int x)
         {
+            var cache = new Dictionary<int, long>();
+            return FibCache(x, cache);
+        }
+
+        private long FibCache(int x, Dictionary<int, long> cache)
+        {
             if (x < 2) return x;
 
-            // Used to look-up x and get result if already calculated
-            var cache = new Dictionary<int, long>();
+            // Use cache to look-up x and get result if already calculated
             // If cache contains x, just return the stored fib result
             if (cache.ContainsKey(x)) return cache[x];
 
             // If cache does not contain x, store the fib result
-            cache[x] = FibCache(x - 1) + FibCache(x - 2);
+            cache[x] = FibCache(x - 1, cache) + FibCache(x - 2, cache);
             // and return the result
             return cache[x];
         }
 
         public void FibCacheDoublingCalc(AlgStats algStats)
         {
-
+            // Only calculate doubling ratios for even values of n and if n/2 exists in prev times table.
+            if (algStats.n % 2 == 0 && algStats.PrevTimesTable.TryGetValue(algStats.n / 2, out double halfTime))
+            {
+                algStats.ActualDoublingRatio = (algStats.TimeMicro / halfTime);
+                algStats.ExpectedDoublingRatio = algStats.n / ((double)algStats.n / 2);
+            }
+            else
+            {
+                algStats.ActualDoublingRatio = -1;
+                algStats.ExpectedDoublingRatio = -1;
+            }
         }
 
         public long FibLoop(int x)
@@ -59,7 +88,17 @@ namespace CSC482_Lab0x04_Fibb
 
         public void FibLoopDoublingCalc(AlgStats algStats)
         {
-
+            // Only calculate doubling ratios for even values of n and if n/2 exists in prev times table.
+            if (algStats.n % 2 == 0 && algStats.PrevTimesTable.TryGetValue(algStats.n / 2, out double halfTime))
+            {
+                algStats.ActualDoublingRatio = (algStats.TimeMicro / halfTime);
+                algStats.ExpectedDoublingRatio = algStats.n / ((double)algStats.n / 2);
+            }
+            else
+            {
+                algStats.ActualDoublingRatio = -1;
+                algStats.ExpectedDoublingRatio = -1;
+            }
         }
 
         public long FibMatrix(int x)
@@ -74,7 +113,17 @@ namespace CSC482_Lab0x04_Fibb
 
         public void FibMatrixDoublingCalc(AlgStats algStats)
         {
-
+            // Only calculate doubling ratios for even values of n and if n/2 exists in prev times table. n must be > 2 for log, otherwise div by 0.
+            if (algStats.n > 2 && algStats.n % 2 == 0 && algStats.PrevTimesTable.TryGetValue(algStats.n / 2, out double halfTime))
+            {
+                algStats.ActualDoublingRatio = (algStats.TimeMicro / halfTime);
+                algStats.ExpectedDoublingRatio = Math.Log2(algStats.n) / Math.Log2(((double)algStats.n / 2));
+            }
+            else
+            {
+                algStats.ActualDoublingRatio = -1;
+                algStats.ExpectedDoublingRatio = -1;
+            }
         }
 
         // Similar to the fast calculate power int
