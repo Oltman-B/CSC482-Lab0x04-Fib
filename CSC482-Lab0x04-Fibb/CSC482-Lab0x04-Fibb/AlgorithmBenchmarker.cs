@@ -5,60 +5,43 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-namespace Lab0x03
+namespace CSC482_Lab0x04_Fibb
 {
     class AlgStats
     {
-        public double PrevTimeMicro;
-        public double TimeMicro;
-        public double ExpectedDoublingRatio;
-        public double ActualDoublingRatio;
-
-        public AlgStats()
-        {
-            PrevTimeMicro = 0;
-            TimeMicro = 0;
-            ExpectedDoublingRatio = 0;
-            ActualDoublingRatio = 0;
-        }
+        public int n = 0;
+        public Dictionary<int, double> PrevTimesTable = new Dictionary<int, double>();
+        public double PrevTimeMicro = 0;
+        public double TimeMicro = 0;
+        public double ExpectedDoublingRatio = 0;
+        public ValueType AlgResult;
+        public double ActualDoublingRatio = 0;
     }
 
     class AlgorithmBenchmarker
     {
-        private const double MaxSecondsPerAlgorithm = 25;
+        private const double MaxSecondsPerAlgorithm = 15;
         private const double MaxMicroSecondsPerAlg = MaxSecondsPerAlgorithm * 1000000;
 
+        private const double MaxSecondsPerIteration = 3;
+        private const double MaxMicroSecondsPerIteration = MaxSecondsPerIteration * 1000000;
+        
+
         private const int NMin = 1;
-        private const int NMax = int.MaxValue;
+        private const int NMax = 92; // 92 is max before 64-bit overflow
 
         private readonly Random _rand = new Random();
         private readonly Stopwatch _stopwatch = new Stopwatch();
 
         // To use benchmarker, simply define the delegate with the signature of your algorithm to test and also the data
         // source it will use.
-        internal delegate bool Algorithm(List<int> dataSource, int target);
+        internal delegate long Algorithm(int x);
         // The algorithms are responsible for defining their own doubling ratio calculator
-        internal delegate void DoublingCalculator(long n, AlgStats stats);
+        internal delegate void DoublingCalculator(AlgStats stats);
 
         // This concrete AlgorithmBenchmark implementation will operate on a list of integers
         private List<Algorithm> _algorithms = new List<Algorithm>();
         private List<DoublingCalculator> _doublingCalculators = new List<DoublingCalculator>();
-
-        // This is just the data generator used for this particular implementation. This should be abstracted
-        // so it can be handled more generically, similarly to the doubling calculators.
-        private List<int> GenerateUniqueSet(int setLength, int min = Int32.MinValue, int max = Int32.MaxValue)
-        {
-            // Use .Net HashSet, which does not store duplicates, to generate a unique set and return as list.
-            var tempSet = new HashSet<int>();
-            long range = (long)max - min;
-            // Account for scenario where range from min to max doesn't have enough values to cover setLength
-            while (tempSet.Count < (int)Math.Min(setLength, range))
-            {
-                tempSet.Add(_rand.Next(min, max));
-            }
-
-            return tempSet.ToList();
-        }
 
         // Called from within the scope of your algorithms instantiation, simply pass the algorithm function name
         // and the doublingcalculator function name as parameters. Call RunTimeTests to run each algorithm added
@@ -85,27 +68,39 @@ namespace Lab0x03
 
             var currentStats = new AlgStats();
 
-            for (var n = NMin; n * 2 < NMax; n *= 2)
+            for (var n = NMin; n < NMax; n++)
             {
-                if (currentStats.TimeMicro > MaxMicroSecondsPerAlg || n*2 < 0) // handle overflow case.
+                currentStats.n = n;
+                if (currentStats.TimeMicro > MaxMicroSecondsPerAlg)
                 {
                     PrintAlgorithmTerminationMessage(algorithm);
                     break;
                 }
 
-                PrintIndexColumn(n);
+                PrintIndexColumn(currentStats.n);
 
-                var testData = GenerateUniqueSet(n);
-                _stopwatch.Restart();
-                algorithm(testData, _rand.Next(NMin, NMax));
-                _stopwatch.Stop();
+                int testCount = 1;
+                int maxTest = 1000000;
+                long tickCounter = 0;
+                while (testCount <= maxTest && TicksToMicroseconds(tickCounter) < MaxMicroSecondsPerIteration)
+                {
+                    _stopwatch.Restart();
+                    currentStats.AlgResult = algorithm(n);
+                    _stopwatch.Stop();
+                    tickCounter += _stopwatch.ElapsedTicks;
+                    testCount++;
+                }
+
+                double averageTimeMicro = TicksToMicroseconds(tickCounter) / testCount;
 
                 currentStats.PrevTimeMicro = currentStats.TimeMicro;
-                currentStats.TimeMicro = TicksToMicroseconds(_stopwatch.ElapsedTicks);
+                currentStats.TimeMicro = averageTimeMicro;
+                // Need to keep a dictionary of previous times for doubling calculation on this alg.
+                currentStats.PrevTimesTable.TryAdd(currentStats.n, averageTimeMicro);
 
-                doublingCalc(n, currentStats);
+                doublingCalc(currentStats);
 
-                PrintData(n, currentStats);
+                PrintData(currentStats);
 
                     // New Row
                 Console.WriteLine();
@@ -118,9 +113,9 @@ namespace Lab0x03
         {
             Console.WriteLine($"Starting run-time tests for {algorithm.Method.Name}...\n");
             Console.WriteLine(
-                " \t\t\t           |    |  Doubling Ratios   |");
+                " \t\t\t           |    |  Doubling Ratios   |    |                Algorithm| ");
             Console.WriteLine(
-                "N\t\t\t       Time|    | Actual  | Expected |");
+                "N\t\t\t       Time|    | Actual  | Expected |    |                   Result|");
         }
 
         private void PrintAlgorithmTerminationMessage(Algorithm algorithm)
@@ -133,7 +128,7 @@ namespace Lab0x03
             Console.Write($"{n,-15}");
         }
 
-        private void PrintData(int n, AlgStats stats)
+        private void PrintData(AlgStats stats)
         {
             var actualDoubleFormatted = stats.ActualDoublingRatio < 0
                 ? "na".PadLeft(12)
@@ -143,7 +138,7 @@ namespace Lab0x03
                 : stats.ExpectedDoublingRatio.ToString("F2").PadLeft(7);
 
             Console.Write(
-                $"{stats.TimeMicro,20:F2} {actualDoubleFormatted} {expectDoubleFormatted}");
+                $"{stats.TimeMicro,20:F2} {actualDoubleFormatted} {expectDoubleFormatted} {stats.AlgResult,35:N0}");
         }
 
         private static double TicksToMicroseconds(long ticks)

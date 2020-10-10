@@ -7,8 +7,15 @@ namespace CSC482_Lab0x04_Fibb
         static void Main(string[] args)
         {
             var sandbox = new FibSandbox();
-
-            Console.WriteLine($"Verification tests passed? {sandbox.RunVerificationTests()}");
+            if (sandbox.RunVerificationTests())
+            {
+                Console.WriteLine("Verification Tests Passed!");
+                sandbox.RunTimeTests();
+            }
+            else
+            {
+                Console.WriteLine("One or more verification tests failed.");
+            }
         }
     }
 }

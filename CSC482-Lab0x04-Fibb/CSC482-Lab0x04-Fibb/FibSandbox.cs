@@ -12,6 +12,11 @@ namespace CSC482_Lab0x04_Fibb
             return FibRecur(x-1) + FibRecur(x-2);
         }
 
+        public void FibRecurDoublingCalc(AlgStats algStats)
+        {
+
+        }
+
         public long FibCache(int x)
         {
             if (x < 2) return x;
@@ -25,6 +30,11 @@ namespace CSC482_Lab0x04_Fibb
             cache[x] = FibCache(x - 1) + FibCache(x - 2);
             // and return the result
             return cache[x];
+        }
+
+        public void FibCacheDoublingCalc(AlgStats algStats)
+        {
+
         }
 
         public long FibLoop(int x)
@@ -47,6 +57,11 @@ namespace CSC482_Lab0x04_Fibb
             return fib2;
         }
 
+        public void FibLoopDoublingCalc(AlgStats algStats)
+        {
+
+        }
+
         public long FibMatrix(int x)
         {
             var multiplier = new long[2, 2] {{1, 1}, {1, 0}};
@@ -55,6 +70,11 @@ namespace CSC482_Lab0x04_Fibb
             // The way I implemented calculate power matrix results in the fibonacci value
             // stored in the bottom right corner of matrix rather than top left.
             return result[1, 1];
+        }
+
+        public void FibMatrixDoublingCalc(AlgStats algStats)
+        {
+
         }
 
         // Similar to the fast calculate power int
@@ -149,6 +169,17 @@ namespace CSC482_Lab0x04_Fibb
             }
 
             return true;
+        }
+
+        public void RunTimeTests()
+        {
+            var benchmarker = new AlgorithmBenchmarker();
+            benchmarker.AddAlgorithmToBenchmark(FibRecur, FibRecurDoublingCalc);
+            benchmarker.AddAlgorithmToBenchmark(FibCache, FibCacheDoublingCalc);
+            benchmarker.AddAlgorithmToBenchmark(FibLoop, FibLoopDoublingCalc);
+            benchmarker.AddAlgorithmToBenchmark(FibMatrix, FibMatrixDoublingCalc);
+
+            benchmarker.RunTimeTests();
         }
 
         public bool RunVerificationTests()
