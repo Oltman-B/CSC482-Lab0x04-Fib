@@ -112,9 +112,9 @@ namespace CSC482_Lab0x04_Fibb
         {
             Console.WriteLine($"Starting run-time tests for {algorithm.Method.Name}...\n");
             Console.WriteLine(
-                " \t\t\t           |    |            Doubling Ratios     |    |                Algorithm| ");
+                " \t\t\t           |    |            Doubling Ratios     |    |                Algorithm|   |   Input|");
             Console.WriteLine(
-                "N\t\t\t       Time|    |         Actual|        Expected|    |                   Result|");
+                "X\t\t\t       Time|    |         Actual|        Expected|    |                   Result|   |    Size|");
         }
 
         private void PrintAlgorithmTerminationMessage(Algorithm algorithm)
@@ -137,7 +137,7 @@ namespace CSC482_Lab0x04_Fibb
                 : stats.ExpectedDoublingRatio.ToString("F2").PadLeft(16);
 
             Console.Write(
-                $"{stats.TimeMicro,20:F2} {actualDoubleFormatted} {expectDoubleFormatted} {stats.AlgResult,30:N0}");
+                $"{stats.TimeMicro,20:F2} {actualDoubleFormatted} {expectDoubleFormatted} {stats.AlgResult,30:N0} {Math.Ceiling(Math.Log2(stats.n)),12:N0}");
         }
 
         private static double TicksToMicroseconds(long ticks)
