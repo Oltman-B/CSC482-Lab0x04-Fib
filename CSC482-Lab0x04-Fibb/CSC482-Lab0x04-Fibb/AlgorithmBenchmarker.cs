@@ -61,14 +61,6 @@ namespace CSC482_Lab0x04_Fibb
                 AlgorithmTestRuntime(_algorithms[i], _doublingCalculators[i]);
             }
         }
-
-        private long CalculateOverhead()
-        {
-            _stopwatch.Restart();
-            _stopwatch.Stop();
-            return _stopwatch.ElapsedTicks;
-        }
-
         private void AlgorithmTestRuntime(Algorithm algorithm, DoublingCalculator doublingCalc)
         {
             PrintHeader(algorithm);
@@ -101,7 +93,7 @@ namespace CSC482_Lab0x04_Fibb
                 double averageTimeMicro = TicksToMicroseconds(tickCounter) / testCount;
 
                 currentStats.PrevTimeMicro = currentStats.TimeMicro;
-                currentStats.TimeMicro = averageTimeMicro - TicksToMicroseconds(CalculateOverhead());
+                currentStats.TimeMicro = averageTimeMicro;
                 // Need to keep a dictionary of previous times for doubling calculation on this alg.
                 currentStats.PrevTimesTable.TryAdd(currentStats.n, averageTimeMicro);
 
