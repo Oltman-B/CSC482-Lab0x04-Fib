@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSC482-Lab0x04-Fibb", "CSC482-Lab0x04-Fibb\CSC482-Lab0x04-Fibb.csproj", "{1C61E991-4DA9-40E6-995B-7D0FCEDC55F1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C61E991-4DA9-40E6-995B-7D0FCEDC55F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C61E991-4DA9-40E6-995B-7D0FCEDC55F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C61E991-4DA9-40E6-995B-7D0FCEDC55F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C61E991-4DA9-40E6-995B-7D0FCEDC55F1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {710F28E9-C704-428D-80AA-1CAD8E3A51F5}
+	EndGlobalSection
+EndGlobal
